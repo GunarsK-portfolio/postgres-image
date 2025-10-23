@@ -29,6 +29,13 @@
       "labels": ["docker", "postgres", "manual-review"]
     },
     {
+      "matchDatasources": ["github-tags"],
+      "matchPackageNames": ["pgpartman/pg_partman", "citusdata/pg_cron"],
+      "groupName": "PostgreSQL Extensions",
+      "automerge": false,
+      "labels": ["postgres-extensions", "manual-review"]
+    },
+    {
       "matchManagers": ["github-actions"],
       "groupName": "GitHub Actions",
       "automerge": true,

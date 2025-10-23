@@ -1,5 +1,8 @@
 FROM postgres:18-alpine
 
+# Install gettext for envsubst (required by init scripts that use environment variables)
+RUN apk add --no-cache gettext
+
 # Install PostgreSQL extensions (pg_partman and pg_cron)
 RUN apk add --no-cache --virtual .build-deps \
         git \

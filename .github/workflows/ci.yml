@@ -31,14 +31,14 @@ jobs:
         with:
           context: .
           load: true
-          tags: ${{ env.IMAGE_NAME }}:scan
+          tags: postgres-image:scan
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.33.1
         with:
-          image-ref: ${{ env.IMAGE_NAME }}:scan
+          image-ref: postgres-image:scan
           format: 'sarif'
           output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
@@ -54,6 +54,6 @@ jobs:
         uses: aquasecurity/trivy-action@0.33.1
         if: always()
         with:
-          image-ref: ${{ env.IMAGE_NAME }}:scan
+          image-ref: postgres-image:scan
           format: 'table'
           severity: 'CRITICAL,HIGH,MEDIUM'

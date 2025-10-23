@@ -1,0 +1,41 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard",
+    ":semanticCommits",
+    ":separateMajorReleases",
+    ":combinePatchMinorReleases",
+    ":label(postgres-image)"
+  ],
+  "timezone": "Europe/Riga",
+  "schedule": ["every weekend"],
+  "packageRules": [
+    {
+      "matchManagers": ["dockerfile"],
+      "matchPackageNames": ["/postgres/"],
+      "matchUpdateTypes": ["patch"],
+      "groupName": "PostgreSQL patches",
+      "automerge": true,
+      "automergeType": "pr",
+      "labels": ["docker", "postgres", "automerge"]
+    },
+    {
+      "matchManagers": ["dockerfile"],
+      "matchPackageNames": ["/postgres/"],
+      "matchUpdateTypes": ["minor", "major"],
+      "groupName": "PostgreSQL updates",
+      "dependencyDashboardApproval": true,
+      "labels": ["docker", "postgres", "manual-review"]
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "groupName": "GitHub Actions",
+      "automerge": true,
+      "labels": ["ci"]
+    }
+  ],
+  "prHourlyLimit": 5,
+  "prConcurrentLimit": 10,
+  "rebaseWhen": "behind-base-branch"
+}

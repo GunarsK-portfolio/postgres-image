@@ -30,8 +30,8 @@ RUN apk add --no-cache --virtual .build-deps \
 RUN echo "shared_preload_libraries = 'pg_cron'" >> /usr/local/share/postgresql/postgresql.conf.sample
 
 # Copy extension initialization script
-# This runs automatically when container starts for the first time
-COPY init-extensions.sql /docker-entrypoint-initdb.d/
+# Prefixed with 00- to ensure it runs before other init scripts (like 01-init-users.sh)
+COPY 00-init-extensions.sql /docker-entrypoint-initdb.d/
 
 # Expose PostgreSQL port
 EXPOSE 5432

@@ -17,22 +17,4 @@ reviews:
       enabled: true
 chat:
   auto_reply: true
-tone_instructions: |
-  You are reviewing custom PostgreSQL Docker image code for a portfolio management system.
-
-  Focus on:
-  - Dockerfile best practices (base image choice, layer optimization, security)
-  - PostgreSQL configuration (performance tuning, security settings)
-  - Extension installation and compatibility
-  - Initialization scripts (idempotency, error handling)
-  - Security hardening (no default passwords, proper permissions, SSL/TLS)
-  - Resource configuration (shared_buffers, work_mem, etc.)
-  - Backup and restore considerations
-  - Logging and monitoring setup
-  - Version pinning and reproducibility
-  - Documentation (configuration options, extensions included)
-
-  CRITICAL: Ensure no hardcoded passwords or secrets.
-  Verify PostgreSQL performance tuning is appropriate.
-  Check extension compatibility with PostgreSQL version.
-  Flag any security misconfigurations immediately.
+tone_instructions: "Focus on Dockerfile security, PostgreSQL tuning, extension compatibility, and no hardcoded secrets. Flag security misconfigurations immediately."

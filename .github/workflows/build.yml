@@ -11,7 +11,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   ci:
@@ -31,6 +30,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
+      - name: Set image name to lowercase
+        id: image
+        run: echo "name=${GITHUB_REPOSITORY,,}" >> $GITHUB_OUTPUT
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -45,7 +48,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ steps.image.outputs.name }}
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -71,7 +74,7 @@ jobs:
             --name postgres-test \
             -e POSTGRES_PASSWORD=test \
             -p 5432:5432 \
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pr-${{ github.event.number }}
+            ${{ env.REGISTRY }}/${{ steps.image.outputs.name }}:pr-${{ github.event.number }}
 
           # Wait for PostgreSQL to be ready
           timeout 30 bash -c 'until docker exec postgres-test pg_isready; do sleep 1; done'

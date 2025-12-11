@@ -62,6 +62,7 @@ jobs:
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
+          load: ${{ github.event_name == 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
@@ -70,11 +71,13 @@ jobs:
       - name: Test image
         if: github.event_name == 'pull_request'
         run: |
+          # Get the first tag from the metadata output
+          IMAGE_TAG=$(echo "${{ steps.meta.outputs.tags }}" | head -n 1)
           docker run --rm -d \
             --name postgres-test \
             -e POSTGRES_PASSWORD=test \
             -p 5432:5432 \
-            ${{ env.REGISTRY }}/${{ steps.image.outputs.name }}:pr-${{ github.event.number }}
+            "$IMAGE_TAG"
 
           # Wait for PostgreSQL to be ready
           timeout 30 bash -c 'until docker exec postgres-test pg_isready; do sleep 1; done'

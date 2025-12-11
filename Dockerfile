@@ -5,7 +5,8 @@ RUN apk add --no-cache gettext
 
 # Replace gosu with version built on latest Go to fix CVE vulnerabilities
 RUN apk add --no-cache --virtual .gosu-deps go git \
-    && GOBIN=/usr/local/bin go install github.com/tianon/gosu@v1.19 \
+    && rm -f /usr/local/bin/gosu \
+    && CGO_ENABLED=0 GOBIN=/usr/local/bin go install -ldflags="-s -w" github.com/tianon/gosu@1.19 \
     && apk del .gosu-deps \
     && gosu --version
 

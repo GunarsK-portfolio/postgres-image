@@ -82,8 +82,9 @@ jobs:
           # Wait for PostgreSQL to be ready
           timeout 30 bash -c 'until docker exec postgres-test pg_isready; do sleep 1; done'
 
-          # Test extensions are available
-          docker exec postgres-test psql -U postgres -c "CREATE EXTENSION IF NOT EXISTS pg_cron; CREATE EXTENSION IF NOT EXISTS pg_partman;"
+          # Test extensions are available (verify they're installed)
+          docker exec postgres-test psql -U postgres -c "SELECT extname FROM pg_extension WHERE extname IN ('pg_cron', 'pg_partman');" | grep -q pg_cron
+          docker exec postgres-test psql -U postgres -c "SELECT extname FROM pg_extension WHERE extname IN ('pg_cron', 'pg_partman');" | grep -q pg_partman
 
           # Cleanup
           docker stop postgres-test

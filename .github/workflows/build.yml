@@ -73,7 +73,7 @@ jobs:
         run: |
           # Get the first tag from the metadata output
           IMAGE_TAG=$(echo "${{ steps.meta.outputs.tags }}" | head -n 1)
-          docker run --rm -d \
+          docker run -d \
             --name postgres-test \
             -e POSTGRES_PASSWORD=test \
             -p 5432:5432 \
@@ -83,8 +83,8 @@ jobs:
           timeout 30 bash -c 'until docker exec postgres-test pg_isready; do sleep 1; done'
 
           # Test extensions are available
-          docker exec postgres-test psql -U postgres -c "CREATE EXTENSION IF NOT EXISTS pg_cron;"
-          docker exec postgres-test psql -U postgres -c "CREATE EXTENSION IF NOT EXISTS pg_partman;"
+          docker exec postgres-test psql -U postgres -c "CREATE EXTENSION IF NOT EXISTS pg_cron; CREATE EXTENSION IF NOT EXISTS pg_partman;"
 
           # Cleanup
           docker stop postgres-test
+          docker rm postgres-test

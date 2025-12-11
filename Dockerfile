@@ -3,6 +3,12 @@ FROM postgres:18-alpine
 # Install gettext for envsubst (required by init scripts that use environment variables)
 RUN apk add --no-cache gettext
 
+# Replace gosu with version built on latest Go to fix CVE vulnerabilities
+RUN apk add --no-cache --virtual .gosu-deps go git \
+    && GOBIN=/usr/local/bin go install github.com/tianon/gosu@v1.19 \
+    && apk del .gosu-deps \
+    && gosu --version
+
 # Install PostgreSQL extensions (pg_partman and pg_cron)
 RUN apk add --no-cache --virtual .build-deps \
         git \

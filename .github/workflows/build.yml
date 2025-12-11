@@ -79,8 +79,9 @@ jobs:
             -p 5432:5432 \
             "$IMAGE_TAG"
 
-          # Wait for PostgreSQL to be ready
-          timeout 30 bash -c 'until docker exec postgres-test pg_isready; do sleep 1; done'
+          # Wait for PostgreSQL to be fully ready (init scripts to complete)
+          # pg_isready can return success before init scripts finish, so also check we can query
+          timeout 60 bash -c 'until docker exec postgres-test pg_isready && docker exec postgres-test psql -U postgres -c "SELECT 1" > /dev/null 2>&1; do sleep 2; done'
 
           # Test extensions are available (verify they're installed)
           docker exec postgres-test psql -U postgres -c "SELECT extname FROM pg_extension WHERE extname IN ('pg_cron', 'pg_partman');" | grep -q pg_cron

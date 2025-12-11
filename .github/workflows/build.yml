@@ -83,8 +83,8 @@ jobs:
           timeout 30 bash -c 'until docker exec postgres-test pg_isready; do sleep 1; done'
 
           # Test extensions are available
-          docker exec postgres-test psql -U postgres -c "CREATE EXTENSION pg_cron;"
-          docker exec postgres-test psql -U postgres -c "CREATE EXTENSION pg_partman;"
+          docker exec postgres-test psql -U postgres -c "CREATE EXTENSION IF NOT EXISTS pg_cron;"
+          docker exec postgres-test psql -U postgres -c "CREATE EXTENSION IF NOT EXISTS pg_partman;"
 
           # Cleanup
           docker stop postgres-test

@@ -1,5 +1,8 @@
 FROM postgres:18-alpine
 
+# Update base packages to fix CVEs (e.g., zlib)
+RUN apk upgrade --no-cache
+
 # Install gettext for envsubst (required by init scripts that use environment variables)
 RUN apk add --no-cache gettext
 

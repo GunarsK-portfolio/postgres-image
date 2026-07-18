@@ -42,13 +42,12 @@ jobs:
           image-ref: postgres-image:scan
           format: 'sarif'
           output: 'trivy-results.sarif'
-          severity: 'CRITICAL,HIGH'
-          exit-code: '1'
+          exit-code: '0'
           version: 'v0.72.0'
 
       - name: Upload Trivy results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v4
-        if: always()
+        if: always() && github.event.repository.visibility == 'public'
         with:
           sarif_file: 'trivy-results.sarif'
 
@@ -58,5 +57,23 @@ jobs:
         with:
           image-ref: postgres-image:scan
           format: 'table'
-          severity: 'CRITICAL,HIGH,MEDIUM'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '1'
           version: 'v0.72.0'
+
+  workflow-lint:
+    name: Workflow Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Install actionlint
+        env:
+          ACTIONLINT_VERSION: 1.7.12
+        run: |
+          BASE="https://raw.githubusercontent.com/rhysd/actionlint/v$ACTIONLINT_VERSION"
+          bash <(curl -s "$BASE/scripts/download-actionlint.bash") "$ACTIONLINT_VERSION" /tmp
+
+      - name: Run actionlint
+        run: /tmp/actionlint -color

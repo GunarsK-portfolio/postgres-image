@@ -1,3 +1,9 @@
+# Build gosu with a current Go toolchain; Alpine's `go` package lags behind
+# and carries Go stdlib CVEs, so build it here instead of via apk's go.
+FROM golang:1.26.5-alpine AS gosu-builder
+RUN apk add --no-cache git \
+    && CGO_ENABLED=0 GOBIN=/usr/local/bin go install -ldflags="-s -w" github.com/tianon/gosu@1.19
+
 FROM postgres:18-alpine
 
 # Update base packages to fix CVEs (e.g., zlib)
@@ -6,20 +12,18 @@ RUN apk upgrade --no-cache
 # Install gettext for envsubst (required by init scripts that use environment variables)
 RUN apk add --no-cache gettext
 
-# Replace gosu with version built on latest Go to fix CVE vulnerabilities
-RUN apk add --no-cache --virtual .gosu-deps go git \
-    && rm -f /usr/local/bin/gosu \
-    && CGO_ENABLED=0 GOBIN=/usr/local/bin go install -ldflags="-s -w" github.com/tianon/gosu@1.19 \
-    && apk del .gosu-deps \
-    && gosu --version
+# Replace gosu with the version built on current Go (fixes Go stdlib CVEs)
+RUN rm -f /usr/local/bin/gosu
+COPY --from=gosu-builder /usr/local/bin/gosu /usr/local/bin/gosu
+RUN gosu --version
 
 # Install PostgreSQL extensions (pg_partman and pg_cron)
 RUN apk add --no-cache --virtual .build-deps \
         git \
         build-base \
         postgresql-dev \
-        clang19 \
-        llvm19 \
+        clang21 \
+        llvm21 \
     && cd /tmp \
     # Install pg_partman v5.3.0
     && git clone --branch v5.3.0 --depth 1 https://github.com/pgpartman/pg_partman.git \

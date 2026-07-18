@@ -6,6 +6,8 @@ RUN apk add --no-cache git \
 
 FROM postgres:18-alpine
 
+# Security update - CACHE_BUST is set by CI to force a fresh apk upgrade
+ARG CACHE_BUST
 # Update base packages to fix CVEs (e.g., zlib)
 RUN apk upgrade --no-cache
 

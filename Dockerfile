@@ -18,8 +18,8 @@ RUN apk add --no-cache --virtual .build-deps \
         git \
         build-base \
         postgresql-dev \
-        clang19 \
-        llvm19 \
+        clang21 \
+        llvm21 \
     && cd /tmp \
     # Install pg_partman v5.3.0
     && git clone --branch v5.3.0 --depth 1 https://github.com/pgpartman/pg_partman.git \

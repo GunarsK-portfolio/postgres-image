@@ -33,6 +33,8 @@ jobs:
           context: .
           load: true
           tags: postgres-image:scan
+          build-args: |
+            CACHE_BUST=${{ github.run_id }}-${{ github.run_attempt }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

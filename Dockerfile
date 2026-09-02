@@ -1,6 +1,6 @@
 # Build gosu with a current Go toolchain; Alpine's `go` package lags behind
 # and carries Go stdlib CVEs, so build it here instead of via apk's go.
-FROM golang:1.26.5-alpine AS gosu-builder
+FROM golang:1.27.1-alpine AS gosu-builder
 RUN apk add --no-cache git \
     && CGO_ENABLED=0 GOBIN=/usr/local/bin go install -ldflags="-s -w" github.com/tianon/gosu@1.19
 
